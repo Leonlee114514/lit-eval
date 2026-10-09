@@ -82,10 +82,12 @@ async def _unhandled_exception_handler(request, exc: Exception):
         content={"ok": False, "data": None, "warnings": [f"服务器内部错误: {type(exc).__name__}: {exc}"]},
     )
 
+# 跨域只放行本机前端来源（此前是 allow_origins=["*"] + allow_credentials=True，
+# 等于任何网页都能带凭据调这套接口）。前端默认走 Vite 代理，属同源请求，不受影响。
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 开发期全放开；生产应限定前端域名
-    allow_credentials=True,
+    allow_origins=get_settings().cors_origin_list,
+    allow_credentials=False,  # 本应用无登录态，不需要跨域带凭据
     allow_methods=["*"],
     allow_headers=["*"],
 )

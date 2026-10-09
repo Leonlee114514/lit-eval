@@ -21,6 +21,17 @@ class Settings(BaseSettings):
     # 服务
     port: int = 8000
 
+    # ---- 跨域（CORS）----
+    # 允许的前端来源，逗号分隔。开发时前端走 Vite 代理（/api → 127.0.0.1:8000），
+    # 浏览器看到的是同源请求，正常使用其实用不到 CORS；收紧是为了万一被同网段或公网
+    # 访问时，不把接口开放给任何网页（此前是 allow_origins=["*"] + allow_credentials=True）。
+    # 换前端地址/端口时在这里加，例如加一份 Vite preview：http://localhost:4173
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
     # 抓取礼貌邮箱（Crossref 提速到 50 req/s 礼貌池）
     fetcher_mailto: str = ""
 

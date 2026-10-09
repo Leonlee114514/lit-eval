@@ -92,3 +92,23 @@ def test_frontend_endpoints_all_exist(test_app):
     }
     missing = _EXPECTED_ENDPOINTS - actual
     assert not missing, f"拆分后丢失的端点: {sorted(missing)}"
+
+
+def test_cors_allows_only_the_local_frontend(client):
+    """跨域只放行本机前端来源。
+
+    此前是 ``allow_origins=["*"]`` + ``allow_credentials=True`` —— 任何网页都能
+    顶着用户身份调这套接口。前端默认走 Vite 代理（同源），正常使用不经过 CORS，
+    所以收紧没有代价；这条测试防的是"哪天图方便又改回通配"。
+    """
+    preflight = {"Access-Control-Request-Method": "GET"}
+
+    allowed = client.options(
+        "/api/health", headers={"Origin": "http://localhost:5173", **preflight}
+    )
+    assert allowed.headers.get("access-control-allow-origin") == "http://localhost:5173"
+
+    denied = client.options(
+        "/api/health", headers={"Origin": "https://evil.example", **preflight}
+    )
+    assert "access-control-allow-origin" not in denied.headers, "通配来源被放行了"
