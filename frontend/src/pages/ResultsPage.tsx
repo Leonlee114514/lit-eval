@@ -9,6 +9,14 @@ import ProjectSelector from "../components/ProjectSelector";
 import PaperStatusTag from "../components/PaperStatusTag";
 import ProjectNetwork from "../components/charts/ProjectNetwork";
 import { usePageTitle } from "../hooks/usePageTitle";
+import {
+  countDownloadable,
+  filterPapers,
+  sortPapers,
+  toggleSort as nextSortState,
+  type SortDir,
+  type SortKey,
+} from "../utils/paperSorting";
 
 const DECISION_LABEL: Record<string, string> = {
   deep_read: "精读",
@@ -33,14 +41,8 @@ export default function ResultsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [downloadTask, setDownloadTask] = useState<{ id: string; done: boolean; msg: string } | null>(null);
 
-  type SortKey = "composite" | "title" | "journal" | "citations" | "journal_percentile" | "tier";
-  const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({ key: "composite", dir: "desc" });
-  const toggleSort = (key: SortKey) =>
-    setSort(prev =>
-      prev.key === key
-        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
-        : { key, dir: key === "title" || key === "journal" ? "asc" : "desc" }
-    );
+  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({ key: "composite", dir: "desc" });
+  const toggleSort = (key: SortKey) => setSort(prev => nextSortState(prev, key));
 
   const { data: projects = [] } = useQuery({ queryKey: ["projects"], queryFn: api.listProjects });
 
@@ -113,10 +115,7 @@ export default function ResultsPage() {
   }, [downloadTask, projectId, qc]);
 
   // 选中里还没有全文、真正需要下载的篇数
-  const downloadable = useMemo(
-    () => [...selected].filter(id => !papers.find(p => p.id === id)?.has_fulltext).length,
-    [selected, papers],
-  );
+  const downloadable = useMemo(() => countDownloadable(papers, selected), [selected, papers]);
 
   const toggleSelect = (id: string) => {
     setSelected(prev => {
@@ -127,37 +126,9 @@ export default function ResultsPage() {
     });
   };
 
-  const filtered = useMemo(() => {
-    if (filter === "all") return papers;
-    return papers.filter(p => {
-      const t = p.evaluation?.tier;
-      if (filter === "pending") return !t;
-      return t === filter;
-    });
-  }, [papers, filter]);
+  const filtered = useMemo(() => filterPapers(papers, filter), [papers, filter]);
 
-  const sorted = useMemo(() => {
-    const tierRank = (t: string | null | undefined) =>
-      t === "high_priority" ? 4 : t === "recommended" ? 3 : t === "conditional" ? 2 : t === "not_recommended" ? 1 : 0;
-    const val = (p: Paper): number | string => {
-      switch (sort.key) {
-        case "composite": return p.evaluation?.composite_score ?? -1;
-        case "title": return p.title ?? p.doi ?? "";
-        case "journal": return p.journal ?? "";
-        case "citations": return p.cited_by_count ?? -1;
-        case "journal_percentile": return p.journal_percentile ?? -1;
-        case "tier": return tierRank(p.evaluation?.tier);
-      }
-    };
-    return filtered.slice().sort((a, b) => {
-      const av = val(a);
-      const bv = val(b);
-      const cmp = typeof av === "string" || typeof bv === "string"
-        ? String(av).localeCompare(String(bv), "zh-Hans-CN")
-        : (av as number) - (bv as number);
-      return sort.dir === "asc" ? cmp : -cmp;
-    });
-  }, [filtered, sort]);
+  const sorted = useMemo(() => sortPapers(filtered, sort.key, sort.dir), [filtered, sort]);
 
   const sortIcon = (key: SortKey) =>
     sort.key !== key ? <ArrowUpDown size={12} strokeWidth={1.8} aria-hidden="true" /> :
