@@ -184,6 +184,7 @@ export default function ResultsPage() {
         <select
           value={filter}
           onChange={e => setFilter(e.target.value)}
+          aria-label="按推荐档位筛选"
         >
           <option value="all">全部档位</option>
           <option value="high_priority">优先引用</option>
@@ -301,12 +302,13 @@ export default function ResultsPage() {
             <table>
               <thead>
                 <tr>
-                  <th style={{ width: 32 }}>
+                  <th style={{ width: 32 }} aria-label="选择">
                     <input
                       type="checkbox"
                       checked={selected.size > 0 && selected.size === filtered.length}
                       ref={el => { if (el) el.indeterminate = selected.size > 0 && selected.size < filtered.length; }}
                       onChange={() => setSelected(prev => (prev.size > 0 ? new Set() : new Set(filtered.map(p => p.id))))}
+                      aria-label="全选当前列表"
                     />
                   </th>
                   <th aria-sort={ariaSort("title")}><button className="th-sort" onClick={() => toggleSort("title")}>标题 {sortIcon("title")}</button></th>
@@ -333,10 +335,11 @@ export default function ResultsPage() {
                           type="checkbox"
                           checked={selected.has(p.id)}
                           onChange={() => toggleSelect(p.id)}
+                          aria-label={`选择 ${p.title ?? p.doi ?? "该论文"}`}
                         />
                       </td>
                       <td style={{ maxWidth: 420 }}>
-                        {p.has_fulltext && <span title="已有全文 PDF" aria-label="已有全文 PDF"><FileText size={14} strokeWidth={1.7} style={{ verticalAlign: "-2px", marginRight: 4, color: "var(--muted)" }} /></span>}
+                        {p.has_fulltext && <span role="img" title="已有全文 PDF" aria-label="已有全文 PDF"><FileText size={14} strokeWidth={1.7} style={{ verticalAlign: "-2px", marginRight: 4, color: "var(--muted)" }} /></span>}
                         {p.title ?? p.doi}
                       </td>
                       <td className="muted">{p.journal ?? "—"} / {p.publication_year ?? "—"}</td>

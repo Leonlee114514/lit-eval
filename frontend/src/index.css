@@ -18,7 +18,10 @@
 
   --text: #1b2230;
   --text-soft: #3a4556;
-  --muted: #64748b;
+  /* 浅色主题的次要文字。原来是 #64748b，对页面底色 #e9eef8 只有 4.09:1，
+     低于 WCAG AA 的 4.5:1（axe 报在结果页的「操作说明」折叠标题上）。
+     调深一档后约 5.5:1 —— 视觉上只深一点点，但过了线。 */
+  --muted: #556070;
   --primary: #2563eb;
   --green: #16a34a;
   --yellow: #b45309;
@@ -267,6 +270,20 @@ code {
 .page-title { margin: 0 0 16px; font-size: 24px; font-weight: 700; letter-spacing: -0.015em; }
 .muted { color: var(--muted); font-size: 13px; }
 .small { font-size: 12px; }
+/* 仅供屏幕阅读器：视觉上隐藏，但保留在可访问性树里。
+   用于"看得见的是图标/空单元格、需要补一句说明"的场合 ——
+   aria-label 在这种地方不算"读屏可见文本"，axe 的 empty-table-header 就会报。 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .card {
   position: relative;

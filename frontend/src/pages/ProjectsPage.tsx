@@ -135,7 +135,7 @@ export default function ProjectsPage() {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <table>
             <thead>
-              <tr><th>名称</th><th>研究主题</th><th>关键词</th><th>文献数</th><th></th></tr>
+              <tr><th>名称</th><th>研究主题</th><th>关键词</th><th>文献数</th><th><span className="sr-only">操作</span></th></tr>
             </thead>
             <tbody>
               {projects.map(p => (

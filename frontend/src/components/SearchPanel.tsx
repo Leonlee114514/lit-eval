@@ -184,6 +184,7 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
             style={{ width: "100%", marginTop: 6 }}
             value={workType}
             onChange={e => setWorkType(e.target.value)}
+            aria-label="文献类型"
           >
             {WORK_TYPES.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
           </select>
@@ -236,6 +237,7 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
           <select
             value={sortBy}
             onChange={e => { setSortBy(e.target.value as SearchSortKey); setPage(1); }}
+            aria-label="结果排序方式"
           >
             {(Object.keys(SORT_LABELS) as SearchSortKey[]).map(k => (
               <option key={k} value={k}>{SORT_LABELS[k]}</option>
@@ -249,12 +251,13 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
           <table>
             <thead>
               <tr>
-                <th style={{ width: 32 }}>
+                <th style={{ width: 32 }} aria-label="选择">
                   <input
                     type="checkbox"
                     checked={selected.size > 0 && selected.size === selectableCount}
                     ref={el => { if (el) el.indeterminate = selected.size > 0 && selected.size < selectableCount; }}
                     onChange={toggleAll}
+                    aria-label="全选可导入结果"
                   />
                 </th>
                 <th>标题</th><th>期刊 / 年份</th><th>被引</th><th>相关性</th><th>状态</th>
@@ -273,6 +276,7 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
                         checked={checked}
                         disabled={r.already_imported}
                         onChange={() => toggleSelect(key)}
+                        aria-label={`选择 ${r.title ?? r.doi ?? "该文献"}`}
                       />
                     </td>
                     <td style={{ maxWidth: 420 }}>{r.title ?? r.doi}</td>
