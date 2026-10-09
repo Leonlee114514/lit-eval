@@ -1,0 +1,165 @@
+{
+  "version": 8,
+  "description": "文献评估评分规则 v8——七因子 + 单篇 GNN + 项目级共引网络（共享参考文献/文献耦合/核心文献/教科书式引用）。",
+  "weights": {
+    "journal": 0.18,
+    "citation": 0.18,
+    "timeliness": 0.108,
+    "author": 0.108,
+    "reproducibility": 0.144,
+    "relevance": 0.18,
+    "content_quality": 0.1
+  },
+  "journal": {
+    "mode": "max",
+    "jcr_mapping": {
+      "Q1": 90,
+      "Q2": 70,
+      "Q3": 45,
+      "Q4": 20
+    },
+    "cas_mapping": {
+      "1": 100,
+      "2": 80,
+      "3": 50,
+      "4": 25
+    }
+  },
+  "citation": {
+    "review_discount": 0.7,
+    "self_citation": {
+      "ratio_gt": 0.2,
+      "max_discount": 0.5
+    }
+  },
+  "recency": {
+    "classic_floor": 75,
+    "frontier_weights": {
+      "age_freshness": 0.4,
+      "hot_topic": 0.3,
+      "ref_freshness": 0.3
+    },
+    "method_penalty_cap": 30,
+    "methods_blacklist": [
+      {
+        "pattern": "B3LYP",
+        "context_pattern": "6-31G\\(d\\)|3-21G|STO-3G|6-311G\\(d\\)|3-21\\*|6-31G\\*",
+        "penalty": 15,
+        "description": "B3LYP 配小 Pople 基组（过渡金属体系需更大基组/色散校正，精度已过时的组合）"
+      }
+    ]
+  },
+  "author": {
+    "corresponding_weight": 0.7,
+    "first_author_weight": 0.3
+  },
+  "reproducibility": {
+    "weights": {
+      "data": 0.25,
+      "code": 0.25,
+      "supplement": 0.2,
+      "preregistration": 0.15,
+      "coi": 0.15
+    },
+    "penalties": {
+      "retracted": 1.0,
+      "commercial_without_coi": 0.15,
+      "n1": 0.1
+    },
+    "era_neutral_year": 2000
+  },
+  "content_quality": {
+    "with_figure": {
+      "structure": 0.5,
+      "reproducibility": 0.3,
+      "figure": 0.2
+    },
+    "without_figure": {
+      "structure": 0.6,
+      "reproducibility": 0.4
+    }
+  },
+  "tier": {
+    "high_priority": 0.85,
+    "recommended": 0.6,
+    "conditional": 0.35
+  },
+  "decision": {
+    "step1": {
+      "label": "筛期刊",
+      "jcr_acceptable": [
+        "Q1",
+        "Q2"
+      ],
+      "cas_zone_min": 2,
+      "journal_percentile_ge": 70
+    },
+    "step2": {
+      "label": "看被引",
+      "citation_score_ge": 50,
+      "classic_age_gt": 10
+    },
+    "step3": {
+      "label": "读内容"
+    },
+    "step4": {
+      "label": "查溯源"
+    },
+    "relevance_low_threshold": 0.35
+  },
+  "warnings": {
+    "self_citation_ratio_gt": 0.2,
+    "percentile_vs_if_gap_gt": 30,
+    "review_citation_multiple": 5,
+    "review_citation_floor": 50
+  },
+  "labels": {
+    "tier": {
+      "high_priority": "优先引用",
+      "recommended": "可选引用",
+      "conditional": "谨慎引用",
+      "not_recommended": "不推荐"
+    },
+    "decision": {
+      "deep_read": "值得精读/引用",
+      "background_only": "仅作背景引用",
+      "reject": "不建议引用"
+    },
+    "components": {
+      "journal": "期刊权重",
+      "citation": "被引权重",
+      "timeliness": "活跃度权重",
+      "author": "作者权重",
+      "reproducibility": "可重复性权重",
+      "relevance": "相关性权重",
+      "content_quality": "内容质量权重"
+    },
+    "radar": {
+      "journal_level": "期刊水平",
+      "citation_impact": "引用影响力",
+      "content_quality": "内容质量",
+      "timeliness": "活跃度",
+      "relevance": "相关性"
+    }
+  },
+  "confidence": {
+    "low_threshold": 0.5,
+    "downgrade": true
+  },
+  "citation_network": {
+    "citing_limit": 8,
+    "reference_limit": 8,
+    "textbook_min_citations": 500,
+    "textbook_min_co_cited": 2,
+    "textbook_min_age": 10
+  },
+  "project_network": {
+    "min_co_cited": 2,
+    "max_references": 60,
+    "coupling_min_shared": 1,
+    "core_reference_limit": 10,
+    "textbook_min_citations": 500,
+    "textbook_min_co_cited": 2,
+    "textbook_min_age": 10
+  }
+}

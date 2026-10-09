@@ -1,0 +1,4 @@
+# 可选：语义相似度（SBERT）。MVP 默认不安装，使用 jieba+TF-IDF 即可。
+# 安装：pip install torch --index-url https://download.pytorch.org/whl/cpu 之后执行本文件
+torch>=2.12
+sentence-transformers>=5.6

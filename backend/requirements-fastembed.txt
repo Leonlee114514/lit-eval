@@ -1,0 +1,5 @@
+# 可选：多语言语义相关性（fastembed，ONNX 轻量，无需 torch/SBERT 2GB）
+# 安装：pip install -r requirements-fastembed.txt
+# 启用：.env 设 USE_FASTEMBED=1
+# 模型首次运行从 HuggingFace 下载（约 130MB），国内网络可设 HF_ENDPOINT=https://hf-mirror.com
+fastembed>=0.3

@@ -1,0 +1,19 @@
+# 文献评估后端依赖（Python 3.14 兼容）
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.13
+pydantic-settings
+httpx>=0.27
+requests>=2.32
+tenacity
+numpy>=2.3
+scikit-learn
+jieba
+pypdf
+sqlalchemy>=2.0.40
+python-multipart
+python-dotenv
+pytest
+pytest-asyncio
+anyio
+networkx>=3.4

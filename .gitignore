@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+backend/data/
+backend/.env
+
+# Node
+node_modules/
+frontend/dist/
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 下载产物（CLI / 批量下载服务的输出目录，可再生；不要进版本库）
+文献/
+
+# 构建缓存
+*.tsbuildinfo
+
+# IDE / 工具本地状态
+backend/.idea/
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
