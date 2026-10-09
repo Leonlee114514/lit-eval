@@ -10,6 +10,7 @@ from app.deps import get_orchestrator
 from app.models.paper import Paper
 from app.schemas.paper import PaperPatch
 from app.services import evaluation_service, project_service
+from app.services.content import pdf_store
 
 router = APIRouter(prefix="/api/papers", tags=["papers"])
 
@@ -121,7 +122,8 @@ async def upload_fulltext(
     settings = get_settings()
     pdf_dir = settings.data_dir / "pdfs"
     pdf_dir.mkdir(parents=True, exist_ok=True)
-    path = pdf_dir / f"{paper_id}.pdf"
+    # 按 DOI 命名：同一文献在不同项目里共用同一个文件
+    path = pdf_store.pdf_path(pdf_dir, paper.doi, paper_id)
 
     content = await file.read()
     if not content:

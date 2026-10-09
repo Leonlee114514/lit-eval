@@ -52,7 +52,7 @@ async def _download_paper_ids(paper_ids: list[str], progress) -> dict:
 
     与 _evaluate_paper_ids 同模式：单篇失败只记 fetch_log + results，不阻塞整批。
     """
-    from app.services.content import pdf_downloader
+    from app.services.content import pdf_downloader, pdf_store
 
     settings = get_settings()
     pdf_dir = settings.data_dir / "pdfs"
@@ -85,7 +85,8 @@ async def _download_paper_ids(paper_ids: list[str], progress) -> dict:
                 if not paper.doi:
                     results.append({"paper_id": pid, "status": "failed", "reason": "无 DOI"})
                     continue
-                dest = pdf_dir / f"{pid}.pdf"
+                # 按 DOI 命名 → 同一文献在不同项目里共用同一个文件（不重复落盘）
+                dest = pdf_store.pdf_path(pdf_dir, paper.doi, pid)
                 res = await asyncio.to_thread(
                     pdf_downloader.download_pdf,
                     paper.doi, dest,
