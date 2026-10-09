@@ -66,6 +66,7 @@ def decide(
     rules = get_rules()
     step1 = rules["decision"]["step1"]
     step2 = rules["decision"]["step2"]
+    step3 = rules["decision"]["step3"]
     reasons: list[str] = []
     warnings: list[str] = []
     data_status = data_status or {}
@@ -99,7 +100,9 @@ def decide(
     else:
         journal_pass = (jcr_ok or cas_ok) or percentile_ok
         if journal_pass:
-            reasons.append("期刊门槛通过（JCR/中科院分区或化学领域百分位≥70 达标）")
+            reasons.append(
+                f"期刊门槛通过（JCR/中科院分区或化学领域百分位≥{step1['journal_percentile_ge']} 达标）"
+            )
         else:
             reasons.append("期刊门槛未达标，建议仅作背景引用")
 
@@ -139,7 +142,7 @@ def decide(
     structure_score = component_scores.get("content_quality", 50.0)
     if data_status.get("content_quality") == "missing":
         reasons.append("摘要与全文均缺失，内容质量为中性占位（50/100），建议先补全文再精读")
-    elif structure_score >= 60:
+    elif structure_score >= step3["content_quality_ge"]:
         reasons.append(f"内容质量良好（{structure_score:.0f}/100），值得精读")
     else:
         reasons.append(f"内容质量一般（{structure_score:.0f}/100），建议核实实验细节")

@@ -48,3 +48,47 @@ def test_deps_module_stays_a_leaf():
         "assert 'app.api' not in sys.modules, 'app.deps 拉进了路由层，依赖方向反了'"
     )
     assert result.returncode == 0, result.stderr
+
+
+# 前端 frontend/src/api/client.ts 实际调用的端点（拆分 router_projects 前后必须一致）
+_EXPECTED_ENDPOINTS = {
+    ("get", "/api/health"),
+    ("get", "/api/meta/rules"),
+    ("get", "/api/projects"),
+    ("post", "/api/projects"),
+    ("get", "/api/projects/{project_id}"),
+    ("patch", "/api/projects/{project_id}"),
+    ("delete", "/api/projects/{project_id}"),
+    ("get", "/api/projects/{project_id}/papers"),
+    ("post", "/api/projects/{project_id}/papers"),
+    ("post", "/api/projects/{project_id}/pmid-lookup"),
+    ("get", "/api/projects/{project_id}/recheck"),
+    ("get", "/api/projects/{project_id}/citation-network"),
+    ("post", "/api/projects/{project_id}/evaluate-all"),
+    ("post", "/api/projects/{project_id}/evaluate-selected"),
+    ("post", "/api/projects/{project_id}/download-pdfs"),
+    ("get", "/api/search/works"),
+    ("get", "/api/papers/{paper_id}"),
+    ("patch", "/api/papers/{paper_id}"),
+    ("post", "/api/papers/{paper_id}/evaluate"),
+    ("post", "/api/papers/{paper_id}/fulltext"),
+    ("get", "/api/papers/{paper_id}/evaluation"),
+    ("get", "/api/papers/{paper_id}/report"),
+    ("get", "/api/tasks/{task_id}"),
+}
+
+
+def test_frontend_endpoints_all_exist(test_app):
+    """路由拆分最容易出的错是"拆完忘了 include_router" —— 单测全绿，前端整片 404。
+
+    这里对着 OpenAPI 清单核对前端真正会调用的每一个端点。
+    """
+    spec = test_app.openapi()
+    actual = {
+        (method, path)
+        for path, ops in spec["paths"].items()
+        for method in ops
+        if method in ("get", "post", "patch", "delete")
+    }
+    missing = _EXPECTED_ENDPOINTS - actual
+    assert not missing, f"拆分后丢失的端点: {sorted(missing)}"

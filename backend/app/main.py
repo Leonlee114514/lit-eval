@@ -8,7 +8,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import (
+    router_batch,
     router_evals,
+    router_imports,
     router_meta,
     router_papers,
     router_projects,
@@ -90,6 +92,8 @@ app.add_middleware(
 
 app.include_router(router_meta.router)
 app.include_router(router_projects.router)
+app.include_router(router_imports.router)
+app.include_router(router_batch.router)
 app.include_router(router_papers.router)
 app.include_router(router_evals.router)
 app.include_router(router_reports.router)

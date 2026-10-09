@@ -1,6 +1,6 @@
 {
-  "version": 8,
-  "description": "文献评估评分规则 v8——七因子 + 单篇 GNN + 项目级共引网络（共享参考文献/文献耦合/核心文献/教科书式引用）。",
+  "version": 9,
+  "description": "文献评估评分规则 v9——七因子 + 单篇 GNN + 项目级共引网络（共享参考文献/文献耦合/核心文献/教科书式引用）。v9：把内容质量门槛（60）从 decision.py 的硬编码搬进 decision.step3，与其余阈值同源。",
   "weights": {
     "journal": 0.18,
     "citation": 0.18,
@@ -100,7 +100,8 @@
       "classic_age_gt": 10
     },
     "step3": {
-      "label": "读内容"
+      "label": "读内容",
+      "content_quality_ge": 60
     },
     "step4": {
       "label": "查溯源"
