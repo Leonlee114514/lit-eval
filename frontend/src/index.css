@@ -479,7 +479,9 @@ button.small { gap: 5px; }
 .hero-stat b { display: block; color: var(--text); font-size: 15px; line-height: 1.15; }
 
 /* 可排序表头 */
-th .th-sort { display: inline-flex; align-items: center; gap: 5px; min-height: 0; padding: 2px 4px; background: transparent; border: none; box-shadow: none; color: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; }
+/* padding 撑开点击目标到 ≥26px（WCAG 2.2 要求点击目标至少 24px），再用等量负 margin 抵消 ——
+   视觉上仍是纯文本、表头行高也不变。原来 min-height:0 + padding:2px 4px 只有 20px 高。 */
+th .th-sort { display: inline-flex; align-items: center; gap: 5px; min-height: 0; padding: 5px 6px; margin: -5px -6px; background: transparent; border: none; box-shadow: none; color: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; }
 th .th-sort:hover { background: var(--menu-hover); filter: none; }
 th .th-sort svg { color: var(--muted); }
 
