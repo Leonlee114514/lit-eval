@@ -359,6 +359,10 @@ input, textarea, select {
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 input { width: 100%; }
+/* checkbox / radio 不该继承上面的 width:100%：在 flex 行里它的布局盒会撑满整行
+   （视觉上只是左边一个小方块），把同一行的标签文字挤成竖排 ——
+   搜索面板的「扩展同义词搜索」就是这么被压成两行的。 */
+input[type="checkbox"], input[type="radio"] { width: auto; }
 textarea { display: block; width: 100%; resize: vertical; }
 select { width: auto; }
 .card label { display: block; margin-bottom: 6px; }

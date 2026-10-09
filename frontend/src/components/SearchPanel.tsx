@@ -195,7 +195,10 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
 
       <label
         className="small"
-        style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, cursor: "pointer" }}
+        style={{
+          display: "flex", alignItems: "center", gap: 6, marginBottom: 8,
+          cursor: "pointer", flexWrap: "wrap",
+        }}
       >
         <input
           type="checkbox"
@@ -205,8 +208,9 @@ export default function SearchPanel({ initialQuery = "" }: { initialQuery?: stri
             // 已有结果时立刻按新开关重搜，方便直接对比两种口径
             if (searchPlan) void doSearch(!expandSynonyms);
           }}
+          style={{ flexShrink: 0 }}
         />
-        扩展同义词搜索
+        <span style={{ flexShrink: 0 }}>扩展同义词搜索</span>
         <span className="muted">
           （搜 waterborne 时连 aqueous / water-based 一起搜，命中更多但可能更杂）
         </span>
